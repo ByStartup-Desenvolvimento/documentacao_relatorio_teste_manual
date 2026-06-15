@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POP — Procedimento Operacional Padrão: Testes Manuais | ByStartup</title>
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-page: #0f1117;
+      --bg-card: #1a1d27;
+      --bg-card2: #20233a;
+      --bg-card3: #252940;
+      --border: #2a2f4a;
+      --accent: #6c63ff;
+      --accent-light: #8b85ff;
+      --accent-glow: rgba(108, 99, 255, 0.15);
+      --pass: #22c55e;
+      --fail: #ef4444;
+      --warn: #f59e0b;
+      --info: #3b82f6;
+      --text-primary: #e2e8f0;
+      --text-muted: #8892a4;
+      --text-dim: #5a6478;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+      --radius: 12px;
+      --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       TOPBAR
+    ============================================================ */
+    .topbar {
+      background: linear-gradient(135deg, #1a1d27 0%, #20233a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-brand .topbar-logo {
+      height: 24px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .topbar-brand span {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: -0.01em;
+      border-left: 1px solid var(--border);
+      padding-left: 12px;
+      margin-left: 4px;
+    }
+
+    .topbar-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .topbar-meta .version-badge {
+      background: var(--accent-glow);
+      color: var(--accent-light);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: 1px solid rgba(108, 99, 255, 0.25);
+    }
+
+    /* ============================================================
+       LAYOUT
+    ============================================================ */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ============================================================
+       HERO / COVER
+    ============================================================ */
+    .hero {
+      text-align: center;
+      padding: 3rem 2rem;
+      margin-bottom: 2.5rem;
+      background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card2) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 50%, rgba(108, 99, 255, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-glow);
+      color: var(--accent-light);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(108, 99, 255, 0.25);
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* ============================================================
+       TABLE OF CONTENTS (SIDEBAR NAV)
+    ============================================================ */
+    .toc {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .toc h3 {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-light);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toc ol {
+      list-style: none;
+      counter-reset: toc-counter;
+    }
+
+    .toc ol li {
+      counter-increment: toc-counter;
+      margin-bottom: 0.5rem;
+    }
+
+    .toc ol li a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .toc ol li a::before {
+      content: counter(toc-counter, decimal-leading-zero);
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--accent);
+      background: var(--accent-glow);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .toc ol li a:hover {
+      background: var(--accent-glow);
+      color: var(--text-primary);
+    }
+
+    /* ============================================================
+       SECTIONS
+    ============================================================ */
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .section-header {
+      background: linear-gradient(135deg, var(--bg-card2) 0%, var(--bg-card3) 100%);
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-header .step-number {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .section-body {
+      padding: 1.5rem;
+    }
+
+    .section-body p {
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .section-body h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--accent-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-body h3:first-child {
+      margin-top: 0;
+    }
+
+    /* ============================================================
+       LISTS
+    ============================================================ */
+    .section-body ul,
+    .section-body ol {
+      margin: 0.75rem 0 1rem 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .section-body ul li,
+    .section-body ol li {
+      margin-bottom: 0.5rem;
+      padding-left: 4px;
+    }
+
+    /* ============================================================
+       TABLES
+    ============================================================ */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      background: var(--bg-card2);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-light);
+      border-bottom: 2px solid var(--border);
+    }
+
+    tbody td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tbody tr:hover {
+      background: rgba(108, 99, 255, 0.04);
+    }
+
+    /* ============================================================
+       CODE BLOCKS
+    ============================================================ */
+    code {
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 0.85em;
+      background: var(--bg-card2);
+      padding: 2px 7px;
+      border-radius: 5px;
+      color: var(--accent-light);
+      border: 1px solid var(--border);
+    }
+
+    pre {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      position: relative;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      border: none;
+      color: var(--text-primary);
+      font-size: 0.82rem;
+      line-height: 1.7;
+    }
+
+    .code-label {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       ALERT BOXES
+    ============================================================ */
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      margin: 1rem 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .alert-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .alert.info {
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    .alert.success {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #86efac;
+    }
+
+    .alert.warning {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+    }
+
+    .alert.danger {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+
+    /* ============================================================
+       STEP CARDS (para procedimento)
+    ============================================================ */
+    .step-card {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      position: relative;
+      border-left: 3px solid var(--accent);
+    }
+
+    .step-card .step-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-card p,
+    .step-card ul {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       CHECKLIST
+    ============================================================ */
+    .checklist {
+      list-style: none;
+      margin: 1rem 0;
+      padding: 0;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .checklist li:hover {
+      background: var(--bg-card3);
+    }
+
+    .checklist li .check-icon {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      margin-top: 1px;
+    }
+
+    /* ============================================================
+       DIAGRAM / FLOW
+    ============================================================ */
+    .flow-diagram {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      justify-content: center;
+      align-items: center;
+      margin: 1.5rem 0;
+    }
+
+    .flow-step {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      text-align: center;
+      min-width: 140px;
+      max-width: 180px;
+    }
+
+    .flow-step .flow-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .flow-step .flow-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .flow-step .flow-desc {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .flow-arrow {
+      font-size: 1.5rem;
+      color: var(--accent);
+      padding: 0 8px;
+    }
+
+    /* ============================================================
+       SEVERITY BADGES
+    ============================================================ */
+    .severity {
+      display: inline-flex;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .severity.critico {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--fail);
+    }
+
+    .severity.alto {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warn);
+    }
+
+    .severity.medio {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--info);
+    }
+
+    .severity.baixo {
+      background: rgba(148, 163, 180, 0.15);
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .footer a {
+      color: var(--accent-light);
+      text-decoration: none;
+    }
+
+    /* ============================================================
+       PRINT
+    ============================================================ */
+    @media print {
+      :root {
+        --bg-page: #fff;
+        --bg-card: #fff;
+        --bg-card2: #f8f9fa;
+        --bg-card3: #f1f3f5;
+        --border: #dee2e6;
+        --text-primary: #212529;
+        --text-muted: #6c757d;
+        --accent: #6c63ff;
+        --accent-light: #5a52d5;
+      }
+
+      body {
+        background: #fff;
+        color: #212529;
+        font-size: 11pt;
+      }
+
+      .topbar {
+        position: static;
+        background: #fff;
+        border-bottom: 2px solid #6c63ff;
+      }
+
+      .hero {
+        page-break-after: always;
+      }
+
+      .section {
+        break-inside: avoid;
+        box-shadow: none;
+      }
+
+      .toc {
+        break-after: always;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .hero h1 {
+        font-size: 1.6rem;
+      }
+
+      .topbar {
+        padding: 0 1rem;
+      }
+
+      .flow-diagram {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+
+      table {
+        font-size: 0.78rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ========== TOPBAR ========== -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="evidencias/logo-horizontal_bystartup.webp" alt="ByStartup Logo" class="topbar-logo">
+      <span>POP</span>
+    </div>
+    <div class="topbar-meta">
+      <span class="version-badge">v1.0</span>
+      <span>Junho 2026</span>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+      <div class="hero-badge">📋 Procedimento Operacional Padrão</div>
+      <h1>Relatório de Testes Manuais</h1>
+      <p>Guia completo para criação, execução e documentação de testes manuais profissionais em projetos de software da
+        ByStartup.</p>
+    </section>
+
+    <!-- ========== METADATA ========== -->
+    <div class="section">
+      <div class="section-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <strong
+            style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;">Código
+            do POP</strong>
+          <div style="font-size: 1.1rem; font-weight: 700; margin-top: 4px;">POP-QA-001</div>
+        </div>
+        <div>
+          <strong
+            style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;">Versão
+            / Revisão</strong>
+          <div style="font-size: 1.1rem; font-weight: 700; margin-top: 4px;">1.0 — 12/06/2026</div>
+        </div>
+        <div>
+          <strong
+            style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;">Elaborado
+            por</strong>
+          <div style="font-size: 1.1rem; font-weight: 700; margin-top: 4px;">Equipe de QA — ByStartup</div>
+        </div>
+        <div>
+          <strong
+            style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;">Aprovado
+            por</strong>
+          <div style="font-size: 1.1rem; font-weight: 700; margin-top: 4px;">Gerência de Projetos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== TABLE OF CONTENTS ========== -->
+    <nav class="toc">
+      <h3>📑 Índice</h3>
+      <ol>
+        <li><a href="#objetivo">Objetivo</a></li>
+        <li><a href="#escopo">Escopo de Aplicação</a></li>
+        <li><a href="#responsaveis">Responsáveis</a></li>
+        <li><a href="#prerequisitos">Pré-requisitos e Ferramentas</a></li>
+        <li><a href="#definicoes">Definições e Glossário</a></li>
+        <li><a href="#procedimento">Procedimento Passo a Passo</a></li>
+        <li><a href="#estrutura-pastas">Estrutura de Pastas</a></li>
+        <li><a href="#template">Template do Relatório</a></li>
+        <li><a href="#bugs">Registro de Bugs</a></li>
+        <li><a href="#criterios">Critérios de Aceitação</a></li>
+        <li><a href="#checklist">Checklist Final</a></li>
+        <li><a href="#anexos">Anexos e Referências</a></li>
+      </ol>
+    </nav>
+
+    <!-- ========================================================
+         SEÇÃO 01 — OBJETIVO
+    ========================================================= -->
+    <div class="section" id="objetivo">
+      <div class="section-header">
+        <div class="step-number">01</div>
+        <h2>Objetivo</h2>
+      </div>
+      <div class="section-body">
+        <p>Padronizar o processo de <strong>criação, execução e documentação de testes manuais</strong> em todos os
+          projetos de software da ByStartup, garantindo:</p>
+        <ul>
+          <li><strong>Rastreabilidade</strong> — Cada teste executado tem evidência visual comprovando seu resultado.
+          </li>
+          <li><strong>Consistência</strong> — Todos os projetos seguem o mesmo formato e nomenclatura.</li>
+          <li><strong>Qualidade</strong> — Bugs são documentados com detalhes suficientes para reprodução e correção.
+          </li>
+          <li><strong>Profissionalismo</strong> — O relatório HTML pode ser apresentado ao cliente como prova de
+            qualidade.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 02 — ESCOPO
+    ========================================================= -->
+    <div class="section" id="escopo">
+      <div class="section-header">
+        <div class="step-number">02</div>
+        <h2>Escopo de Aplicação</h2>
+      </div>
+      <div class="section-body">
+        <p>Este POP se aplica a <strong>todos os projetos de software</strong> da ByStartup, incluindo:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo de Projeto</th>
+              <th>Exemplos</th>
+              <th>Ferramenta de Captura</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>📱 Aplicativos Mobile</td>
+              <td>React Native, Flutter, nativo (iOS/Android)</td>
+              <td>Screenshot do dispositivo / emulador</td>
+            </tr>
+            <tr>
+              <td>🌐 Aplicações Web</td>
+              <td>Next.js, React, Vue, sites estáticos</td>
+              <td>Screenshot do navegador (DevTools)</td>
+            </tr>
+            <tr>
+              <td>🔌 APIs / Back-end</td>
+              <td>Node.js, Python, Go</td>
+              <td>Screenshot do Postman / Insomnia / terminal</td>
+            </tr>
+            <tr>
+              <td>🖥️ Sistemas Desktop</td>
+              <td>Electron, WPF, etc.</td>
+              <td>Screenshot da janela do app</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="alert info">
+          <span class="alert-icon">💡</span>
+          <div>O relatório é sempre um arquivo <code>.html</code> autocontido — pode ser aberto em qualquer navegador
+            sem necessidade de servidor ou dependências externas.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 03 — RESPONSÁVEIS
+    ========================================================= -->
+    <div class="section" id="responsaveis">
+      <div class="section-header">
+        <div class="step-number">03</div>
+        <h2>Responsáveis</h2>
+      </div>
+      <div class="section-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Papel</th>
+              <th>Responsabilidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>QA / Testador</strong></td>
+              <td>Executa os testes manuais, captura screenshots, preenche o relatório HTML com os resultados e
+                evidências.</td>
+            </tr>
+            <tr>
+              <td><strong>Desenvolvedor</strong></td>
+              <td>Mapeia os fluxos do sistema para criação dos casos de teste. Corrige bugs reportados no relatório.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Product Owner / Gerente</strong></td>
+              <td>Revisa e aprova o relatório final. Define os critérios de aceitação para liberação.</td>
+            </tr>
+            <tr>
+              <td><strong>Líder Técnico</strong></td>
+              <td>Garante que o POP está sendo seguido e valida a cobertura de testes antes de entregar ao cliente.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 04 — PRÉ-REQUISITOS
+    ========================================================= -->
+    <div class="section" id="prerequisitos">
+      <div class="section-header">
+        <div class="step-number">04</div>
+        <h2>Pré-requisitos e Ferramentas</h2>
+      </div>
+      <div class="section-body">
+        <h3>🛠️ Ferramentas Obrigatórias</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Ferramenta</th>
+              <th>Finalidade</th>
+              <th>Alternativas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Navegador Web</strong></td>
+              <td>Visualizar e validar o relatório HTML</td>
+              <td>Chrome, Firefox, Edge</td>
+            </tr>
+            <tr>
+              <td><strong>Editor de Código</strong></td>
+              <td>Editar o template HTML do relatório</td>
+              <td>VS Code (recomendado), Sublime, Notepad++</td>
+            </tr>
+            <tr>
+              <td><strong>Captura de Tela</strong></td>
+              <td>Gerar screenshots dos testes</td>
+              <td>Nativo do SO, Lightshot, ShareX</td>
+            </tr>
+            <tr>
+              <td><strong>Dispositivo/Emulador</strong></td>
+              <td>Executar o aplicativo em teste</td>
+              <td>Dispositivo físico, Android Studio, Xcode</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>📋 Pré-condições</h3>
+        <ul>
+          <li>O projeto deve estar em um ambiente de <strong>homologação/staging</strong> funcional.</li>
+          <li>Ter acesso ao sistema com credenciais de teste (se necessário login).</li>
+          <li>Conhecer os fluxos principais do sistema (documentados pelo desenvolvedor ou PO).</li>
+        </ul>
+
+        <div class="alert warning">
+          <span class="alert-icon">⚠️</span>
+          <div><strong>Importante:</strong> Nunca execute testes manuais diretamente em ambiente de produção. Use sempre
+            ambientes de homologação ou development.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 05 — DEFINIÇÕES / GLOSSÁRIO
+    ========================================================= -->
+    <div class="section" id="definicoes">
+      <div class="section-header">
+        <div class="step-number">05</div>
+        <h2>Definições e Glossário</h2>
+      </div>
+      <div class="section-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Sigla</th>
+              <th>Significado</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>FL-XX</code></td>
+              <td>Fluxo de Teste</td>
+              <td>Agrupamento lógico de casos de teste por funcionalidade (ex.: FL-01 — Autenticação)</td>
+            </tr>
+            <tr>
+              <td><code>TC-XX</code></td>
+              <td>Test Case (Caso de Teste)</td>
+              <td>Um cenário específico dentro de um fluxo. Ex.: TC-01 — Login com credenciais válidas</td>
+            </tr>
+            <tr>
+              <td><code>BG-XX</code></td>
+              <td>Bug Report</td>
+              <td>Registro de um defeito encontrado durante os testes</td>
+            </tr>
+            <tr>
+              <td><strong>Aprovado</strong></td>
+              <td>Status ✅</td>
+              <td>O caso de teste passou — comportamento real = comportamento esperado</td>
+            </tr>
+            <tr>
+              <td><strong>Reprovado</strong></td>
+              <td>Status ❌</td>
+              <td>O caso de teste falhou — encontrado um bug ou desvio do esperado</td>
+            </tr>
+            <tr>
+              <td><strong>Bloqueado</strong></td>
+              <td>Status ⚠️</td>
+              <td>Não foi possível executar o teste por impedimento externo (ambiente fora, dependência)</td>
+            </tr>
+            <tr>
+              <td><strong>Pendente</strong></td>
+              <td>Status ⏳</td>
+              <td>Caso de teste ainda não foi executado</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>📊 Severidade de Bugs</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Severidade</th>
+              <th>Descrição</th>
+              <th>Exemplo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="severity critico">CRÍTICO</span></td>
+              <td>App crasha, perda de dados, impossível usar funcionalidade core</td>
+              <td>App fecha ao tentar finalizar compra</td>
+            </tr>
+            <tr>
+              <td><span class="severity alto">ALTO</span></td>
+              <td>Funcionalidade importante com defeito, workaround difícil</td>
+              <td>Popup de erro falso após cadastro concluído com sucesso</td>
+            </tr>
+            <tr>
+              <td><span class="severity medio">MÉDIO</span></td>
+              <td>Bug visual ou funcionalidade secundária com problema</td>
+              <td>Imagem de produto não carrega em resolução alta</td>
+            </tr>
+            <tr>
+              <td><span class="severity baixo">BAIXO</span></td>
+              <td>Bug cosmético, melhoria de UX, texto com typo</td>
+              <td>Botão desalinhado em telas muito pequenas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 06 — PROCEDIMENTO PASSO A PASSO
+    ========================================================= -->
+    <div class="section" id="procedimento">
+      <div class="section-header">
+        <div class="step-number">06</div>
+        <h2>Procedimento Passo a Passo</h2>
+      </div>
+      <div class="section-body">
+        <p>Siga os passos abaixo na ordem indicada para criar e preencher o relatório de testes:</p>
+
+        <!-- FLUXO VISUAL -->
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="flow-icon">🗺️</div>
+            <div class="flow-title">1. Mapear Fluxos</div>
+            <div class="flow-desc">Identificar funcionalidades</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-icon">📝</div>
+            <div class="flow-title">2. Criar TCs</div>
+            <div class="flow-desc">Escrever casos de teste</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-icon">📄</div>
+            <div class="flow-title">3. Montar HTML</div>
+            <div class="flow-desc">Copiar template base</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-icon">🧪</div>
+            <div class="flow-title">4. Executar</div>
+            <div class="flow-desc">Testar e capturar telas</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-icon">✅</div>
+            <div class="flow-title">5. Registrar</div>
+            <div class="flow-desc">Preencher resultados</div>
+          </div>
+        </div>
+
+        <!-- DIRETRIZES DE TEMPO, QUALIDADE E REPORTE -->
+        <div class="alert info" style="margin: 1.5rem 0;">
+          <span class="alert-icon">⏱️</span>
+          <div>
+            <strong>⏱️ Prazos, Evidências e Comunicação Obrigatória:</strong>
+            <ul style="margin: 8px 0 0 16px; padding: 0;">
+              <li style="margin-bottom: 6px;"><strong>Tempo Estimado:</strong> Devido à natureza manual, detalhada e minuciosa do processo, a criação, execução e documentação do plano leva de <strong>1 a 3 dias úteis</strong>.</li>
+              <li style="margin-bottom: 6px;"><strong>Evidências Reais:</strong> É obrigatório anexar <strong>screenshots reais</strong> de testes das telas correspondentes aos casos executados. Não utilize mockups ou imagens genéricas.</li>
+              <li style="margin-bottom: 6px;"><strong>Extensões de Prazo:</strong> Esse prazo pode durar mais dias caso sejam encontrados <strong>bugs severos</strong> (críticos ou altos) que exijam resolução imediata e ciclo de reteste da funcionalidade.</li>
+              <li><strong>Reporte ao Tech Lead:</strong> Todo o andamento das execuções, atrasos eventuais causados por bugs graves e bloqueios devem ser <strong>reportados diretamente ao Tech Lead</strong> da equipe.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PASSO 1 -->
+        <div class="step-card">
+          <div class="step-label">Passo 1</div>
+          <h4>🗺️ Mapear os Fluxos do Sistema</h4>
+          <p>Identifique as <strong>funcionalidades principais</strong> do sistema e agrupe-as em fluxos lógicos. Cada
+            fluxo recebe um código <code>FL-XX</code>.</p>
+          <p><strong>Exemplo prático:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nome do Fluxo</th>
+                <th>Descrição</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>FL-01</code></td>
+                <td>Autenticação</td>
+                <td>Login, logout, esqueci senha</td>
+              </tr>
+              <tr>
+                <td><code>FL-02</code></td>
+                <td>Cadastro</td>
+                <td>Criar conta, validações de campo</td>
+              </tr>
+              <tr>
+                <td><code>FL-03</code></td>
+                <td>Busca e Navegação</td>
+                <td>Buscar, filtrar, categorias</td>
+              </tr>
+              <tr>
+                <td><code>FL-04</code></td>
+                <td>Compra</td>
+                <td>Carrinho, checkout, pagamento</td>
+              </tr>
+              <tr>
+                <td><code>FL-05</code></td>
+                <td>Perfil</td>
+                <td>Editar dados, endereço, senha</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="alert info">
+            <span class="alert-icon">💡</span>
+            <div><strong>Dica:</strong> Se o projeto já possui fluxos de teste automatizado (ex.: Maestro, Cypress,
+              Playwright), use-os como base para mapear os fluxos manuais.</div>
+          </div>
+        </div>
+
+        <!-- PASSO 2 -->
+        <div class="step-card">
+          <div class="step-label">Passo 2</div>
+          <h4>📝 Criar Casos de Teste (TCs)</h4>
+          <p>Para cada fluxo, crie casos de teste individuais. Cada TC deve conter:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Descrição</th>
+                <th>Exemplo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Código</strong></td>
+                <td>Identificador único</td>
+                <td><code>TC-01</code></td>
+              </tr>
+              <tr>
+                <td><strong>Descrição</strong></td>
+                <td>O que está sendo testado</td>
+                <td>Login com credenciais válidas</td>
+              </tr>
+              <tr>
+                <td><strong>Pré-condição</strong></td>
+                <td>Estado necessário antes do teste</td>
+                <td>Usuário cadastrado no sistema</td>
+              </tr>
+              <tr>
+                <td><strong>Resultado Esperado</strong></td>
+                <td>O que deve acontecer</td>
+                <td>Redireciona para a tela Home</td>
+              </tr>
+              <tr>
+                <td><strong>Status</strong></td>
+                <td>Resultado obtido</td>
+                <td>Aprovado ✅ / Reprovado ❌</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="alert warning">
+            <span class="alert-icon">⚠️</span>
+            <div><strong>Regra:</strong> A numeração dos TCs deve ser <strong>sequencial e global</strong> em todo o
+              relatório (TC-01, TC-02, ... TC-25), não reinicie a contagem a cada fluxo.</div>
+          </div>
+        </div>
+
+        <!-- PASSO 3 -->
+        <div class="step-card">
+          <div class="step-label">Passo 3</div>
+          <h4>📄 Montar o Relatório HTML</h4>
+          <p>Copie o template base (veja <a href="#template" style="color: var(--accent-light);">Seção 08</a>) e
+            personalize:</p>
+          <ol>
+            <li>Altere o <strong>título</strong> e <strong>nome do projeto</strong> no HTML.</li>
+            <li>Substitua os fluxos e TCs com os que você mapeou nos passos anteriores.</li>
+            <li>Configure a variável <code>testData</code> no JavaScript com a quantidade de TCs por fluxo.</li>
+            <li>Salve o arquivo em <code>docs/relatorio-testes-manuais.html</code> no projeto.</li>
+            <li>Crie a pasta <code>docs/evidencias/</code> para armazenar os screenshots.</li>
+          </ol>
+        </div>
+
+        <!-- PASSO 4 -->
+        <div class="step-card">
+          <div class="step-label">Passo 4</div>
+          <h4>🧪 Executar os Testes e Capturar Evidências</h4>
+          <p>Para cada TC, siga este processo:</p>
+          <ol>
+            <li><strong>Prepare o cenário</strong> — Configure a pré-condição descrita no TC.</li>
+            <li><strong>Execute a ação</strong> — Realize os passos do caso de teste.</li>
+            <li><strong>Capture a tela</strong> — Tire um screenshot do resultado obtido.</li>
+            <li><strong>Nomeie o arquivo</strong> — Use o padrão: <code>tc[número]-[descricao-curta].jpeg</code></li>
+            <li><strong>Salve em</strong> <code>docs/evidencias/</code></li>
+          </ol>
+
+          <p><strong>Padrão de nomenclatura para screenshots:</strong></p>
+          <pre><code>docs/evidencias/
+├── tc01-tela-login.jpeg
+├── tc05-minha-conta.jpeg
+├── tc07-cadastro-sucesso.jpeg
+├── tc11-home-busca.jpeg
+├── tc15-detalhes-produto.jpeg
+└── tc20-editar-perfil.jpeg</code></pre>
+
+          <div class="alert success">
+            <span class="alert-icon">✅</span>
+            <div><strong>Dica:</strong> Capture screenshots em alta resolução e evite cortar informações importantes. Se
+              o teste envolver várias etapas, capture as etapas mais relevantes (início e resultado final).</div>
+          </div>
+        </div>
+
+        <!-- PASSO 5 -->
+        <div class="step-card">
+          <div class="step-label">Passo 5</div>
+          <h4>✅ Registrar Resultados no Relatório</h4>
+          <p>Com os screenshots capturados, atualize o HTML do relatório:</p>
+          <ol>
+            <li><strong>Status do TC:</strong> Altere o <code>&lt;span class="status"&gt;</code> para <code>pass</code>,
+              <code>fail</code>, <code>block</code> ou <code>pending</code>.</li>
+            <li><strong>Evidência visual:</strong> Adicione o <code>&lt;img&gt;</code> na galeria do fluxo
+              correspondente.</li>
+            <li><strong>Observações:</strong> Preencha a caixa de observações com detalhes sobre cada TC.</li>
+            <li><strong>testData:</strong> Atualize os contadores no JavaScript (<code>pass</code>, <code>fail</code>,
+              <code>block</code>).</li>
+          </ol>
+
+          <p><strong>Exemplo — Alterando o status de um TC:</strong></p>
+          <pre><code>&lt;!-- ANTES (Pendente) --&gt;
+&lt;td&gt;&lt;span class="status pending dot"&gt;Pendente&lt;/span&gt;&lt;/td&gt;
+
+&lt;!-- DEPOIS (Aprovado) --&gt;
+&lt;td&gt;&lt;span class="status pass dot"&gt;Aprovado&lt;/span&gt;&lt;/td&gt;</code></pre>
+
+          <p><strong>Exemplo — Adicionando evidência na galeria:</strong></p>
+          <pre><code>&lt;div class="evidence-item" onclick="openLightbox('evidencias/tc01-tela-login.jpeg')"&gt;
+  &lt;img src="evidencias/tc01-tela-login.jpeg" alt="TC-01 — Tela de Login"
+    onerror="this.style.display='none';" /&gt;
+  &lt;div class="evidence-caption"&gt;TC-01 — Tela de Login ✅&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+          <p><strong>Exemplo — Atualizando testData:</strong></p>
+          <pre><code>const testData = {
+  auth:     { total: 5, pass: 5, fail: 0, block: 0 },
+  signup:   { total: 5, pass: 5, fail: 0, block: 0 },
+  search:   { total: 4, pass: 4, fail: 0, block: 0 },
+  purchase: { total: 5, pass: 5, fail: 0, block: 0 },
+  profile:  { total: 6, pass: 6, fail: 0, block: 0 },
+};</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 07 — ESTRUTURA DE PASTAS
+    ========================================================= -->
+    <div class="section" id="estrutura-pastas">
+      <div class="section-header">
+        <div class="step-number">07</div>
+        <h2>Estrutura de Pastas</h2>
+      </div>
+      <div class="section-body">
+        <p>Organize os arquivos de teste seguindo esta estrutura dentro do projeto:</p>
+        <pre><code>projeto/
+├── docs/
+│   ├── relatorio-testes-manuais.html   ← Relatório principal
+│   ├── evidencias/                     ← Pasta com screenshots
+│   │   ├── tc01-tela-login.jpeg
+│   │   ├── tc05-minha-conta.jpeg
+│   │   ├── tc07-cadastro-sucesso.jpeg
+│   │   ├── tc11-home-busca.jpeg
+│   │   ├── tc15-detalhes-produto.jpeg
+│   │   └── ...
+│   └── pop-testes-manuais.html         ← Este documento POP
+└── ...</code></pre>
+
+        <div class="alert info">
+          <span class="alert-icon">💡</span>
+          <div><strong>Importante:</strong> Mantenha os screenshots na pasta <code>evidencias/</code> com nomes
+            descritivos em kebab-case. O HTML referencia as imagens por caminho relativo
+            (<code>evidencias/nome.jpeg</code>), então ambos devem estar no mesmo diretório pai.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 08 — TEMPLATE
+    ========================================================= -->
+    <div class="section" id="template">
+      <div class="section-header">
+        <div class="step-number">08</div>
+        <h2>Template do Relatório</h2>
+      </div>
+      <div class="section-body">
+        <p>Para criar um novo relatório, você tem duas opções:</p>
+
+        <h3>📋 Opção A — Copiar relatório existente</h3>
+        <p>Copie o arquivo <code>relatorio-testes-manuais.html</code> de um projeto concluído e modifique os dados:</p>
+        <ol>
+          <li>Altere o título do projeto na tag <code>&lt;title&gt;</code> e no cabeçalho.</li>
+          <li>Substitua os fluxos (FL-XX) e casos de teste (TC-XX) com os do seu projeto.</li>
+          <li>Limpe a galeria de evidências e a pasta <code>evidencias/</code>.</li>
+          <li>Resete todos os status para <code>pending</code>.</li>
+          <li>Atualize o <code>testData</code> no JavaScript com os novos totais.</li>
+        </ol>
+
+        <h3>🤖 Opção B — Gerar com Assistente IA (Recomendado)</h3>
+        <p>Utilize o assistente IA (Antigravity / Claude) seguindo este prompt:</p>
+        <pre><code>Crie um relatório de testes manuais em HTML profissional para o projeto [NOME DO PROJETO].
+
+Os fluxos do projeto são:
+- FL-01: [Nome do Fluxo] — [Descrição]
+- FL-02: [Nome do Fluxo] — [Descrição]
+- ...
+
+Para cada fluxo, crie casos de teste (TC-XX) com:
+- Descrição do cenário
+- Pré-condição
+- Resultado esperado
+- Status inicial como "Pendente"
+
+Use o mesmo design visual dark mode do relatório do App Mundo Real.
+Inclua: scoreboard com contadores, galeria de evidências, seção de bugs, matriz de cobertura.
+O arquivo deve ser salvo em docs/relatorio-testes-manuais.html</code></pre>
+
+        <div class="alert success">
+          <span class="alert-icon">✅</span>
+          <div><strong>A Opção B é recomendada</strong> porque o assistente IA já conhece o template e vai gerar um
+            relatório personalizado automaticamente, bastando apenas enviar os screenshots dos testes conforme são
+            executados.</div>
+        </div>
+
+        <h3>🔧 Campos Customizáveis do Template</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>Onde editar no HTML</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nome do Projeto</td>
+              <td><code>&lt;title&gt;</code> + <code>.topbar-brand span</code></td>
+              <td>Título exibido na aba e na barra superior</td>
+            </tr>
+            <tr>
+              <td>Data de execução</td>
+              <td><code>.topbar-meta</code></td>
+              <td>Data em que os testes foram realizados</td>
+            </tr>
+            <tr>
+              <td>Fluxos</td>
+              <td>Seções <code>.accordion-item</code></td>
+              <td>Um bloco por fluxo com tabela de TCs</td>
+            </tr>
+            <tr>
+              <td>Casos de Teste</td>
+              <td>Linhas <code>&lt;tr&gt;</code> dentro das tabelas</td>
+              <td>Uma linha por caso de teste</td>
+            </tr>
+            <tr>
+              <td>Galeria</td>
+              <td><code>.evidence-gallery</code></td>
+              <td>Screenshots por fluxo</td>
+            </tr>
+            <tr>
+              <td>Contadores</td>
+              <td>Variável JavaScript <code>testData</code></td>
+              <td>Totais por fluxo para o scoreboard</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 09 — REGISTRO DE BUGS
+    ========================================================= -->
+    <div class="section" id="bugs">
+      <div class="section-header">
+        <div class="step-number">09</div>
+        <h2>Registro de Bugs</h2>
+      </div>
+      <div class="section-body">
+        <p>Quando um TC resulta em <strong>Reprovado ❌</strong>, registre um bug na seção <strong>Log de Bugs</strong>
+          do relatório com as seguintes informações:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>Descrição</th>
+              <th>Exemplo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ID do Bug</strong></td>
+              <td>Código sequencial</td>
+              <td><code>BG-01</code></td>
+            </tr>
+            <tr>
+              <td><strong>Título</strong></td>
+              <td>Resumo claro do problema</td>
+              <td>Popup de erro incorreto ao concluir cadastro</td>
+            </tr>
+            <tr>
+              <td><strong>Severidade</strong></td>
+              <td>Crítico / Alto / Médio / Baixo</td>
+              <td><span class="severity alto">ALTO</span></td>
+            </tr>
+            <tr>
+              <td><strong>Fluxo / TC</strong></td>
+              <td>Referência ao caso de teste</td>
+              <td>FL-02 — Cadastro (TC-07)</td>
+            </tr>
+            <tr>
+              <td><strong>Passos para reproduzir</strong></td>
+              <td>Passos exatos para reproduzir o bug</td>
+              <td>1. Abrir cadastro → 2. Preencher → 3. Cadastrar</td>
+            </tr>
+            <tr>
+              <td><strong>Resultado Esperado</strong></td>
+              <td>O que deveria acontecer</td>
+              <td>Sucesso sem popup de erro</td>
+            </tr>
+            <tr>
+              <td><strong>Resultado Obtido</strong></td>
+              <td>O que realmente aconteceu</td>
+              <td>Popup de erro exibido</td>
+            </tr>
+            <tr>
+              <td><strong>Dispositivo / OS</strong></td>
+              <td>Onde o bug foi encontrado</td>
+              <td>Samsung A52 / Android 14</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p><strong>Exemplo de bloco HTML para registro de bug:</strong></p>
+        <pre><code>&lt;div class="bug-card alto"&gt;
+  &lt;div class="bug-header"&gt;
+    &lt;div&gt;
+      &lt;span class="bug-id"&gt;BG-01&lt;/span&gt;
+      &lt;div class="bug-title"&gt;Popup de erro incorreto ao concluir cadastro&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;span class="severity alto"&gt;ALTO&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;dl class="bug-body"&gt;
+    &lt;dt&gt;Fluxo&lt;/dt&gt;
+    &lt;dd&gt;FL-02 — Cadastro de Novo Usuário (TC-07)&lt;/dd&gt;
+    &lt;dt&gt;Passos para reproduzir&lt;/dt&gt;
+    &lt;dd&gt;1. Abrir tela de cadastro...&lt;/dd&gt;
+    &lt;!-- demais campos --&gt;
+  &lt;/dl&gt;
+&lt;/div&gt;</code></pre>
+
+        <div class="alert danger">
+          <span class="alert-icon">🚨</span>
+          <div><strong>Regra crítica:</strong> Todo TC com status <strong>Reprovado ❌</strong> deve ter obrigatoriamente
+            um bug registrado na seção de bugs. Não marque um TC como reprovado sem criar o BG correspondente.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 10 — CRITÉRIOS DE ACEITAÇÃO
+    ========================================================= -->
+    <div class="section" id="criterios">
+      <div class="section-header">
+        <div class="step-number">10</div>
+        <h2>Critérios de Aceitação</h2>
+      </div>
+      <div class="section-body">
+        <p>O relatório de testes está <strong>aprovado para entrega</strong> quando:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Critério</th>
+              <th>Meta Mínima</th>
+              <th>Ideal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Taxa de aprovação geral</td>
+              <td>≥ 90%</td>
+              <td>100%</td>
+            </tr>
+            <tr>
+              <td>Bugs críticos abertos</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>Bugs altos abertos</td>
+              <td>≤ 1 (com workaround documentado)</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>Cobertura de fluxos</td>
+              <td>100% dos fluxos core testados</td>
+              <td>100% de todos os fluxos</td>
+            </tr>
+            <tr>
+              <td>Evidências visuais</td>
+              <td>≥ 1 screenshot por fluxo</td>
+              <td>1 screenshot por TC</td>
+            </tr>
+            <tr>
+              <td>Observações preenchidas</td>
+              <td>Todos os fluxos testados</td>
+              <td>Todos os fluxos</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="alert warning">
+          <span class="alert-icon">⚠️</span>
+          <div><strong>Bloqueante:</strong> Se a taxa de aprovação for menor que 90% ou houver bugs críticos abertos, o
+            projeto <strong>não pode ser entregue</strong> ao cliente sem aprovação explícita do PO/Gerente.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 11 — CHECKLIST FINAL
+    ========================================================= -->
+    <div class="section" id="checklist">
+      <div class="section-header">
+        <div class="step-number">11</div>
+        <h2>Checklist Final</h2>
+      </div>
+      <div class="section-body">
+        <p>Antes de entregar o relatório, verifique cada item abaixo:</p>
+
+        <h3>📄 Relatório HTML</h3>
+        <ul class="checklist">
+          <li><span class="check-icon">☐</span> Título do projeto está correto no cabeçalho e na aba do navegador</li>
+          <li><span class="check-icon">☐</span> Data de execução está atualizada</li>
+          <li><span class="check-icon">☐</span> Todos os fluxos do sistema estão listados</li>
+          <li><span class="check-icon">☐</span> Todos os TCs estão com status preenchido (nenhum "Pendente")</li>
+          <li><span class="check-icon">☐</span> O scoreboard exibe os números corretos (total, aprovados, reprovados)
+          </li>
+          <li><span class="check-icon">☐</span> A barra de progresso reflete a taxa de aprovação real</li>
+        </ul>
+
+        <h3>📸 Evidências</h3>
+        <ul class="checklist">
+          <li><span class="check-icon">☐</span> Pasta <code>evidencias/</code> existe e contém os screenshots</li>
+          <li><span class="check-icon">☐</span> Screenshots estão nomeados de forma descritiva</li>
+          <li><span class="check-icon">☐</span> Cada fluxo tem pelo menos 1 screenshot na galeria</li>
+          <li><span class="check-icon">☐</span> As imagens carregam corretamente ao abrir o HTML no navegador</li>
+          <li><span class="check-icon">☐</span> O lightbox (ampliar imagem ao clicar) funciona</li>
+        </ul>
+
+        <h3>🐛 Bugs</h3>
+        <ul class="checklist">
+          <li><span class="check-icon">☐</span> Todo TC "Reprovado" tem um bug correspondente na seção de bugs</li>
+          <li><span class="check-icon">☐</span> Cada bug tem severidade, passos para reproduzir e dispositivo</li>
+          <li><span class="check-icon">☐</span> Bugs corrigidos estão marcados como "Resolvido" com descrição da
+            correção</li>
+        </ul>
+
+        <h3>✅ Validação Final</h3>
+        <ul class="checklist">
+          <li><span class="check-icon">☐</span> Relatório abre corretamente no Chrome, Firefox e Edge</li>
+          <li><span class="check-icon">☐</span> Layout está correto em tela cheia e em janela reduzida</li>
+          <li><span class="check-icon">☐</span> Impressão (Ctrl+P) gera um PDF legível</li>
+          <li><span class="check-icon">☐</span> Relatório foi revisado por pelo menos 1 pessoa da equipe</li>
+          <li><span class="check-icon">☐</span> Todos os critérios de aceitação (Seção 10) foram atendidos</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SEÇÃO 12 — ANEXOS
+    ========================================================= -->
+    <div class="section" id="anexos">
+      <div class="section-header">
+        <div class="step-number">12</div>
+        <h2>Anexos e Referências</h2>
+      </div>
+      <div class="section-body">
+        <h3>📎 Exemplo Real</h3>
+        <p>Consulte o relatório de testes do <strong>App Mundo Real</strong> como exemplo de referência. Esse relatório
+          atingiu <strong>25/25 testes aprovados (100%)</strong> com evidências visuais completas e 1 bug encontrado e
+          corrigido.</p>
+        <p>📄 <strong>Arquivo:</strong> <code>docs/relatorio-testes-manuais.html</code> (no repositório do App Mundo
+          Real)</p>
+
+        <h3>📚 Recursos Adicionais</h3>
+        <ul>
+          <li><strong>Template HTML base</strong> — Use como ponto de partida para novos relatórios (Seção 08).</li>
+          <li><strong>Apresentação de treinamento</strong> — <code>docs/apresentacao-pop-testes.html</code></li>
+          <li><strong>Fluxos Maestro</strong> — Testes automatizados que podem ser usados como referência para mapear
+            fluxos manuais (<code>.maestro/</code>).</li>
+        </ul>
+
+        <h3>📝 Histórico de Revisões</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Versão</th>
+              <th>Data</th>
+              <th>Autor</th>
+              <th>Alteração</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1.0</td>
+              <td>12/06/2026</td>
+              <td>Equipe QA — ByStartup</td>
+              <td>Versão inicial do POP</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+      <p>POP-QA-001 v1.0 — © 2026 ByStartup. Documento interno — uso exclusivo da equipe.</p>
+      <p style="margin-top: 0.5rem;">Gerado em <strong>Junho 2026</strong></p>
+    </footer>
+
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apresentação — POP Testes Manuais | ByStartup</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0f1117;
+      --bg-card: #1a1d27;
+      --bg-card2: #20233a;
+      --border: #2a2f4a;
+      --accent: #6c63ff;
+      --accent-light: #8b85ff;
+      --accent-glow: rgba(108, 99, 255, 0.15);
+      --pass: #22c55e;
+      --fail: #ef4444;
+      --warn: #f59e0b;
+      --info: #3b82f6;
+      --text: #e2e8f0;
+      --text-muted: #8892a4;
+      --text-dim: #5a6478;
+      --radius: 16px;
+      --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ============================================================
+       SLIDE CONTAINER
+    ============================================================ */
+    .slides-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 4rem;
+      opacity: 0;
+      transform: translateX(60px);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .slide.prev {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+
+    .slide-content {
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* ============================================================
+       TYPOGRAPHY
+    ============================================================ */
+    .slide h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--text), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .slide h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .slide h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--accent-light);
+    }
+
+    .slide p {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .slide .subtitle {
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .slide .big-emoji {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ============================================================
+       BADGE
+    ============================================================ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-glow);
+      color: var(--accent-light);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(108, 99, 255, 0.25);
+    }
+
+    /* ============================================================
+       CARDS GRID
+    ============================================================ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(108, 99, 255, 0.15);
+    }
+
+    .card .card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .card .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       FLOW DIAGRAM
+    ============================================================ */
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 2rem 0;
+    }
+
+    .flow-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-align: center;
+      min-width: 130px;
+      transition: all 0.3s;
+    }
+
+    .flow-item:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 16px rgba(108, 99, 255, 0.2);
+    }
+
+    .flow-item .fi-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .flow-item .fi-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .flow-item .fi-desc {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .flow-arrow {
+      font-size: 1.5rem;
+      color: var(--accent);
+      padding: 0 10px;
+    }
+
+    /* ============================================================
+       LISTS
+    ============================================================ */
+    .slide ul {
+      list-style: none;
+      margin: 1rem 0;
+    }
+
+    .slide ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 16px;
+      margin-bottom: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      line-height: 1.5;
+      transition: all 0.2s;
+    }
+
+    .slide ul li:hover {
+      border-color: var(--accent);
+      background: var(--bg-card2);
+    }
+
+    .slide ul li .li-icon {
+      flex-shrink: 0;
+      font-size: 1.2rem;
+      margin-top: 2px;
+    }
+
+    /* ============================================================
+       CODE BLOCK
+    ============================================================ */
+    .code-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      color: var(--accent-light);
+    }
+
+    code {
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      background: var(--bg-card2);
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 0.85em;
+      color: var(--accent-light);
+      border: 1px solid var(--border);
+    }
+
+    /* ============================================================
+       TABLE
+    ============================================================ */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+
+    thead th {
+      background: var(--bg-card2);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-light);
+      border-bottom: 2px solid var(--border);
+    }
+
+    tbody td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:hover {
+      background: rgba(108, 99, 255, 0.04);
+    }
+
+    /* ============================================================
+       SEVERITY
+    ============================================================ */
+    .sev {
+      display: inline-flex;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .sev.critico {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--fail);
+    }
+
+    .sev.alto {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warn);
+    }
+
+    .sev.medio {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--info);
+    }
+
+    .sev.baixo {
+      background: rgba(148, 163, 180, 0.15);
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       STATS ROW
+    ============================================================ */
+    .stats-row {
+      display: flex;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      flex: 1;
+      min-width: 120px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .stat-card .stat-value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat-card .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 6px;
+    }
+
+    /* ============================================================
+       CHECKLIST
+    ============================================================ */
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .checklist-item:hover {
+      border-color: var(--accent);
+    }
+
+    .checklist-item .check-box {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .checklist-item.checked .check-box {
+      background: var(--pass);
+      border-color: var(--pass);
+    }
+
+    .checklist-item.checked .check-box::after {
+      content: '✓';
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .checklist-item.checked {
+      opacity: 0.6;
+    }
+
+    /* ============================================================
+       ALERT
+    ============================================================ */
+    .alert-box {
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      margin: 1rem 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .alert-box.tip {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #86efac;
+    }
+
+    .alert-box.warn {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+    }
+
+    .alert-box.info {
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(15, 17, 23, 0.9);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 1000;
+    }
+
+    .nav-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-info .nav-logo {
+      height: 20px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .nav-info .nav-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-left: 1px solid var(--border);
+      padding-left: 12px;
+      margin-left: 4px;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .nav-btn:disabled:hover {
+      background: var(--bg-card);
+      color: var(--text);
+    }
+
+    .slide-counter {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .slide-counter span {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* ============================================================
+       PROGRESS BAR
+    ============================================================ */
+    .progress-track {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--bg-card);
+      z-index: 1001;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #a78bfa);
+      border-radius: 0 4px 4px 0;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ============================================================
+       KEYBOARD HINT
+    ============================================================ */
+    .kbd-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 24px;
+      padding: 0 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-family: var(--font);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       TWO COLUMNS
+    ============================================================ */
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    /* ============================================================
+       COVER DECORATION
+    ============================================================ */
+    .cover-deco {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .cover-deco .circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.06;
+    }
+
+    .cover-deco .c1 {
+      width: 600px;
+      height: 600px;
+      background: var(--accent);
+      top: -200px;
+      right: -100px;
+    }
+
+    .cover-deco .c2 {
+      width: 400px;
+      height: 400px;
+      background: #a78bfa;
+      bottom: -150px;
+      left: -100px;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 768px) {
+      .slide {
+        padding: 2rem 1.5rem;
+      }
+
+      .slide h1 {
+        font-size: 2rem;
+      }
+
+      .slide h2 {
+        font-size: 1.5rem;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .two-cols {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        flex-direction: column;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+
+      .stats-row {
+        flex-direction: column;
+      }
+
+      .kbd-hint {
+        display: none;
+      }
+    }
+
+    /* ============================================================
+       PRINT
+    ============================================================ */
+    @media print {
+
+      .nav-bar,
+      .progress-track {
+        display: none !important;
+      }
+
+      .slide {
+        position: relative !important;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        page-break-after: always;
+        height: auto;
+        min-height: 100vh;
+      }
+
+      body {
+        overflow: visible;
+        background: #fff;
+        color: #212529;
+      }
+
+      :root {
+        --bg: #fff;
+        --bg-card: #f8f9fa;
+        --bg-card2: #f1f3f5;
+        --border: #dee2e6;
+        --text: #212529;
+        --text-muted: #6c757d;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-track">
+    <div class="progress-fill" id="progress" style="width: 0%;"></div>
+  </div>
+
+  <div class="slides-wrapper" id="slidesWrapper">
+
+    <!-- =====================================================
+         SLIDE 1 — CAPA
+    ====================================================== -->
+    <div class="slide active" data-slide="0">
+      <div class="cover-deco">
+        <div class="circle c1"></div>
+        <div class="circle c2"></div>
+      </div>
+      <div class="slide-content" style="text-align: center;">
+        <div class="badge">📋 POP-QA-001</div>
+        <h1>Testes Manuais<br>Profissionais</h1>
+        <p class="subtitle">Procedimento Operacional Padrão para criação,<br>execução e documentação de testes manuais.
+        </p>
+        <div
+          style="margin-top: 2.5rem; display: flex; align-items: center; justify-content: center; gap: 16px; flex-direction: column;">
+          <img src="evidencias/logo-horizontal_bystartup.webp" alt="ByStartup Logo"
+            style="height: 32px; width: auto; object-fit: contain;">
+          <span style="color: var(--text-dim); font-size: 0.9rem;">Junho 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — POR QUE TESTAR?
+    ====================================================== -->
+    <div class="slide" data-slide="1">
+      <div class="slide-content">
+        <div class="big-emoji">🎯</div>
+        <h2>Por que testar manualmente?</h2>
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-icon">🔍</div>
+            <div class="card-title">Olho Humano</div>
+            <div class="card-desc">Detecta problemas visuais, de UX e de fluxo que automação não pega.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">📸</div>
+            <div class="card-title">Evidências</div>
+            <div class="card-desc">Screenshots comprovam o funcionamento para o cliente e stakeholders.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🛡️</div>
+            <div class="card-title">Confiança</div>
+            <div class="card-desc">Relatório profissional aumenta a credibilidade da entrega.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🐛</div>
+            <div class="card-title">Bugs Reais</div>
+            <div class="card-desc">Teste no dispositivo real encontra bugs que o emulador não reproduz.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — O QUE É O POP?
+    ====================================================== -->
+    <div class="slide" data-slide="2">
+      <div class="slide-content">
+        <div class="big-emoji">📄</div>
+        <h2>O que é o POP?</h2>
+        <p>Um documento padronizado com <strong>12 seções</strong> que guia qualquer membro da equipe a criar relatórios
+          de teste consistentes.</p>
+        <div class="two-cols">
+          <div>
+            <h3>📋 O POP contém:</h3>
+            <ul>
+              <li><span class="li-icon">1️⃣</span> Objetivo e escopo</li>
+              <li><span class="li-icon">2️⃣</span> Glossário (FL, TC, BG)</li>
+              <li><span class="li-icon">3️⃣</span> Procedimento passo a passo</li>
+              <li><span class="li-icon">4️⃣</span> Template HTML base</li>
+              <li><span class="li-icon">5️⃣</span> Checklist final</li>
+            </ul>
+          </div>
+          <div>
+            <h3>🎯 Resultado esperado:</h3>
+            <ul>
+              <li><span class="li-icon">✅</span> Relatórios padronizados</li>
+              <li><span class="li-icon">✅</span> Evidências visuais</li>
+              <li><span class="li-icon">✅</span> Bugs documentados</li>
+              <li><span class="li-icon">✅</span> Entrega profissional</li>
+              <li><span class="li-icon">✅</span> Rastreabilidade total</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — FLUXO DO PROCESSO
+    ====================================================== -->
+    <div class="slide" data-slide="3">
+      <div class="slide-content">
+        <div class="big-emoji">🔄</div>
+        <h2>Fluxo do Processo</h2>
+        <p>5 passos para criar um relatório de testes completo:</p>
+        <div class="flow">
+          <div class="flow-item">
+            <div class="fi-icon">🗺️</div>
+            <div class="fi-title">1. Mapear</div>
+            <div class="fi-desc">Fluxos do sistema</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">
+            <div class="fi-icon">📝</div>
+            <div class="fi-title">2. Criar TCs</div>
+            <div class="fi-desc">Casos de teste</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">
+            <div class="fi-icon">📄</div>
+            <div class="fi-title">3. Montar HTML</div>
+            <div class="fi-desc">Template base</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">
+            <div class="fi-icon">🧪</div>
+            <div class="fi-title">4. Executar</div>
+            <div class="fi-desc">Testar + screenshots</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">
+            <div class="fi-icon">✅</div>
+            <div class="fi-title">5. Registrar</div>
+            <div class="fi-desc">Preencher resultados</div>
+          </div>
+        </div>
+        <div class="alert-box tip">
+          <span>💡</span>
+          <div>Se o projeto já tem fluxos automatizados (Maestro, Cypress, Playwright), use-os como base para mapear os
+            fluxos manuais.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — PRAZOS, EVIDÊNCIAS E COMUNICAÇÃO
+    ====================================================== -->
+    <div class="slide" data-slide="4">
+      <div class="slide-content">
+        <div class="big-emoji">⏱️</div>
+        <h2>Prazos, Evidências e Comunicação</h2>
+        <p>Diretrizes essenciais de tempo, qualidade e reporte na execução de testes manuais:</p>
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-icon">📆</div>
+            <div class="card-title">Tempo Estimado (1-3 Dias)</div>
+            <div class="card-desc">O processo de criação, execução e documentação leva de <strong>1 a 3 dias
+                úteis</strong> devido à natureza manual minuciosa.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">📸</div>
+            <div class="card-title">Evidências Reais</div>
+            <div class="card-desc">É obrigatório anexar <strong>screenshots reais</strong> das telas testadas. Não
+              utilize imagens genéricas ou mockups temporários.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🐛</div>
+            <div class="card-title">Bugs e Extensões</div>
+            <div class="card-desc">Em caso de <strong>bugs severos</strong> (críticos/altos) que exijam correção e
+              reteste, o prazo poderá ser estendido.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🗣️</div>
+            <div class="card-title">Reporte ao Tech Lead</div>
+            <div class="card-desc">Qualquer desvio nos prazos, andamento das execuções e impedimentos deve ser
+              <strong>reportado diretamente ao Tech Lead</strong>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — PREPARAÇÃO
+    ====================================================== -->
+    <div class="slide" data-slide="5">
+      <div class="slide-content">
+        <div class="big-emoji">🛠️</div>
+        <h2>Preparação</h2>
+        <p>Antes de começar, verifique se você tem:</p>
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-icon">🌐</div>
+            <div class="card-title">Navegador Web</div>
+            <div class="card-desc">Chrome, Firefox ou Edge para visualizar o relatório HTML.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">✏️</div>
+            <div class="card-title">Editor de Código</div>
+            <div class="card-desc">VS Code (recomendado), Sublime ou Notepad++ para editar o HTML.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">📱</div>
+            <div class="card-title">Dispositivo de Teste</div>
+            <div class="card-desc">Celular físico ou emulador com o app instalado.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">📸</div>
+            <div class="card-title">Captura de Tela</div>
+            <div class="card-desc">Ferramenta para screenshots (nativa do SO, Lightshot, ShareX).</div>
+          </div>
+        </div>
+        <div class="alert-box warn">
+          <span>⚠️</span>
+          <div><strong>Nunca</strong> execute testes em ambiente de produção. Use sempre homologação/staging.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — PASSO 1: MAPEAR FLUXOS
+    ====================================================== -->
+    <div class="slide" data-slide="6">
+      <div class="slide-content">
+        <div class="badge">Passo 1 de 5</div>
+        <h2>🗺️ Mapear Fluxos</h2>
+        <p>Identifique as funcionalidades principais e agrupe em fluxos lógicos (<code>FL-XX</code>):</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nome</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>FL-01</code></td>
+              <td>Autenticação</td>
+              <td>Login, logout, esqueci senha</td>
+            </tr>
+            <tr>
+              <td><code>FL-02</code></td>
+              <td>Cadastro</td>
+              <td>Criar conta, validações de campo</td>
+            </tr>
+            <tr>
+              <td><code>FL-03</code></td>
+              <td>Busca e Navegação</td>
+              <td>Buscar, filtrar, categorias</td>
+            </tr>
+            <tr>
+              <td><code>FL-04</code></td>
+              <td>Compra</td>
+              <td>Carrinho, checkout, pagamento</td>
+            </tr>
+            <tr>
+              <td><code>FL-05</code></td>
+              <td>Perfil</td>
+              <td>Editar dados, endereço, senha</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 7 — PASSO 2: CRIAR CASOS DE TESTE
+    ====================================================== -->
+    <div class="slide" data-slide="7">
+      <div class="slide-content">
+        <div class="badge">Passo 2 de 5</div>
+        <h2>📝 Criar Casos de Teste</h2>
+        <p>Para cada fluxo, defina cenários específicos (<code>TC-XX</code>):</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>O que preencher</th>
+              <th>Exemplo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Código</strong></td>
+              <td>Sequencial global</td>
+              <td><code>TC-01</code></td>
+            </tr>
+            <tr>
+              <td><strong>Descrição</strong></td>
+              <td>O que está sendo testado</td>
+              <td>Login com credenciais válidas</td>
+            </tr>
+            <tr>
+              <td><strong>Pré-condição</strong></td>
+              <td>Estado antes do teste</td>
+              <td>Usuário cadastrado</td>
+            </tr>
+            <tr>
+              <td><strong>Resultado Esperado</strong></td>
+              <td>O que deve acontecer</td>
+              <td>Redireciona para Home</td>
+            </tr>
+            <tr>
+              <td><strong>Status</strong></td>
+              <td>Resultado obtido</td>
+              <td>✅ Aprovado / ❌ Reprovado</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="alert-box warn">
+          <span>⚠️</span>
+          <div>A numeração é <strong>sequencial e global</strong> (TC-01, TC-02, ..., TC-25). Não reinicie a contagem em
+            cada fluxo!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 8 — PASSO 3: EXECUTAR TESTES
+    ====================================================== -->
+    <div class="slide" data-slide="8">
+      <div class="slide-content">
+        <div class="badge">Passo 3 de 5</div>
+        <h2>🧪 Executar Testes</h2>
+        <p>Para cada TC, siga este ciclo:</p>
+        <ul>
+          <li><span class="li-icon">1️⃣</span> <strong>Prepare</strong> — Configure a pré-condição descrita no TC</li>
+          <li><span class="li-icon">2️⃣</span> <strong>Execute</strong> — Realize os passos do caso de teste</li>
+          <li><span class="li-icon">3️⃣</span> <strong>Capture</strong> — Tire screenshot do resultado</li>
+          <li><span class="li-icon">4️⃣</span> <strong>Nomeie</strong> — Use o padrão:
+            <code>tc01-descricao.jpeg</code>
+          </li>
+          <li><span class="li-icon">5️⃣</span> <strong>Salve</strong> — Coloque na pasta
+            <code>docs/evidencias/</code>
+          </li>
+        </ul>
+        <div class="code-block">
+          docs/evidencias/<br>
+          ├── tc01-tela-login.jpeg<br>
+          ├── tc05-minha-conta.jpeg<br>
+          ├── tc07-cadastro-sucesso.jpeg<br>
+          ├── tc11-home-busca.jpeg<br>
+          └── tc15-detalhes-produto.jpeg
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 9 — PASSO 4: REGISTRAR RESULTADOS
+    ====================================================== -->
+    <div class="slide" data-slide="9">
+      <div class="slide-content">
+        <div class="badge">Passo 4 de 5</div>
+        <h2>✅ Registrar Resultados</h2>
+        <p>Atualize o HTML do relatório com os resultados:</p>
+        <div class="two-cols">
+          <div>
+            <h3>Alterar Status</h3>
+            <div class="code-block">
+              <span style="color: var(--fail);">— Antes (Pendente):</span><br>
+              &lt;span class="status <strong>pending</strong>"&gt;<br>
+              &nbsp;&nbsp;Pendente<br>
+              &lt;/span&gt;<br><br>
+              <span style="color: var(--pass);">— Depois (Aprovado):</span><br>
+              &lt;span class="status <strong>pass</strong>"&gt;<br>
+              &nbsp;&nbsp;Aprovado<br>
+              &lt;/span&gt;
+            </div>
+          </div>
+          <div>
+            <h3>Atualizar Contadores</h3>
+            <div class="code-block">
+              const testData = {<br>
+              &nbsp;&nbsp;auth: {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;total: 5,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;pass: <strong style="color: var(--pass);">5</strong>,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;fail: 0,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;block: 0<br>
+              &nbsp;&nbsp;},<br>
+              &nbsp;&nbsp;// ...<br>
+              };
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 10 — PASSO 5: DOCUMENTAR BUGS
+    ====================================================== -->
+    <div class="slide" data-slide="10">
+      <div class="slide-content">
+        <div class="badge">Passo 5 de 5</div>
+        <h2>🐛 Documentar Bugs</h2>
+        <p>Quando um TC for <strong>Reprovado ❌</strong>, crie um registro de bug (<code>BG-XX</code>):</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ID</strong></td>
+              <td>Código sequencial (<code>BG-01</code>, <code>BG-02</code>...)</td>
+            </tr>
+            <tr>
+              <td><strong>Título</strong></td>
+              <td>Resumo claro do problema</td>
+            </tr>
+            <tr>
+              <td><strong>Severidade</strong></td>
+              <td><span class="sev critico">CRÍTICO</span> <span class="sev alto">ALTO</span> <span
+                  class="sev medio">MÉDIO</span> <span class="sev baixo">BAIXO</span></td>
+            </tr>
+            <tr>
+              <td><strong>Passos</strong></td>
+              <td>Passos exatos para reproduzir o bug</td>
+            </tr>
+            <tr>
+              <td><strong>Esperado vs Obtido</strong></td>
+              <td>O que deveria acontecer vs. o que aconteceu</td>
+            </tr>
+            <tr>
+              <td><strong>Dispositivo</strong></td>
+              <td>Modelo + SO (ex.: Samsung A52 / Android 14)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="alert-box warn">
+          <span>🚨</span>
+          <div>Todo TC <strong>Reprovado</strong> deve ter obrigatoriamente um BG registrado. Nunca reprove sem
+            documentar!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 11 — EXEMPLO REAL
+    ====================================================== -->
+    <div class="slide" data-slide="11">
+      <div class="slide-content">
+        <div class="big-emoji">🏆</div>
+        <h2>Exemplo Real — App Mundo Real</h2>
+        <p>Relatório de testes concluído com sucesso:</p>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-value" style="color: var(--accent-light);">25</div>
+            <div class="stat-label">Total de Testes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color: var(--pass);">25</div>
+            <div class="stat-label">Aprovados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color: var(--fail);">0</div>
+            <div class="stat-label">Reprovados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color: var(--pass);">100%</div>
+            <div class="stat-label">Taxa Aprovação</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color: var(--warn);">1</div>
+            <div class="stat-label">Bug Corrigido</div>
+          </div>
+        </div>
+        <div class="alert-box tip">
+          <span>📄</span>
+          <div>Consulte o arquivo <code>relatorio-testes-manuais.html</code> no repositório do App Mundo Real como
+            referência completa.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 12 — CHECKLIST FINAL
+    ====================================================== -->
+    <div class="slide" data-slide="12">
+      <div class="slide-content">
+        <div class="big-emoji">✅</div>
+        <h2>Checklist Final</h2>
+        <p>Antes de entregar o relatório, verifique cada item:</p>
+        <div class="checklist-item" onclick="this.classList.toggle('checked')">
+          <div class="check-box"></div>
+          <span>Título do projeto correto no cabeçalho e aba do navegador</span>
+        </div>
+        <div class="checklist-item" onclick="this.classList.toggle('checked')">
+          <div class="check-box"></div>
+          <span>Todos os TCs com status preenchido (nenhum "Pendente")</span>
+        </div>
+        <div class="checklist-item" onclick="this.classList.toggle('checked')">
+          <div class="check-box"></div>
+          <span>Scoreboard com números corretos</span>
+        </div>
+        <div class="checklist-item" onclick="this.classList.toggle('checked')">
+          <div class="check-box"></div>
+          <span>Cada fluxo tem pelo menos 1 screenshot na galeria</span>
+        </div>
+        <div class="checklist-item" onclick="this.classList.toggle('checked')">
+          <div class="check-box"></div>
+          <span>Imagens carregam corretamente ao abrir o HTML</span>
+        </div>
+        <div class="checklist-item" onclick="this.classList.toggle('checked')">
+          <div class="check-box"></div>
+          <span>Todo TC "Reprovado" tem bug (BG) correspondente</span>
+        </div>
+        <div class="checklist-item" onclick="this.classList.toggle('checked')">
+          <div class="check-box"></div>
+          <span>Taxa de aprovação ≥ 90% e zero bugs críticos abertos</span>
+        </div>
+        <div class="checklist-item" onclick="this.classList.toggle('checked')">
+          <div class="check-box"></div>
+          <span>Relatório revisado por pelo menos 1 pessoa da equipe</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 13 — ENCERRAMENTO
+    ====================================================== -->
+    <div class="slide" data-slide="13">
+      <div class="cover-deco">
+        <div class="circle c1"></div>
+        <div class="circle c2"></div>
+      </div>
+      <div class="slide-content" style="text-align: center;">
+        <div class="big-emoji">🚀</div>
+        <h1>Bora testar!</h1>
+        <p class="subtitle">Acesse os documentos de referência:</p>
+        <div class="cards-grid" style="max-width: 500px; margin: 1.5rem auto;">
+          <div class="card" style="text-align: center;">
+            <div class="card-icon">📋</div>
+            <div class="card-title">POP Completo</div>
+            <div class="card-desc"><code>docs/pop-testes-manuais.html</code></div>
+          </div>
+          <div class="card" style="text-align: center;">
+            <div class="card-icon">📊</div>
+            <div class="card-title">Exemplo Real</div>
+            <div class="card-desc"><code>docs/relatorio-testes-manuais.html</code></div>
+          </div>
+        </div>
+        <div style="margin-top: 2.5rem; display: flex; align-items: center; justify-content: center; gap: 12px;">
+          <img src="evidencias/logo-horizontal_bystartup.webp" alt="ByStartup Logo"
+            style="height: 32px; width: auto; object-fit: contain;">
+        </div>
+        <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 1rem;">Dúvidas? Fale com a equipe de QA</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== NAVIGATION BAR ========== -->
+  <nav class="nav-bar">
+    <div class="nav-info">
+      <img src="evidencias/logo-horizontal_bystartup.webp" alt="ByStartup Logo" class="nav-logo">
+      <div class="nav-title">POP — Testes Manuais</div>
+    </div>
+    <div class="nav-center">
+      <button class="nav-btn" id="btnPrev" onclick="prevSlide()" disabled>←</button>
+      <div class="slide-counter"><span id="currentSlide">1</span> <span>/ <span id="totalSlides">13</span></span>
+      </div>
+      <button class="nav-btn" id="btnNext" onclick="nextSlide()">→</button>
+    </div>
+    <div class="kbd-hint">
+      <kbd>←</kbd> <kbd>→</kbd> navegar &nbsp;|&nbsp; <kbd>F</kbd> tela cheia
+    </div>
+  </nav>
+
+  <script>
+    /* ==========================================================
+       SLIDE NAVIGATION
+    ========================================================== */
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let current = 0;
+
+    document.getElementById('totalSlides').textContent = totalSlides;
+
+    function goToSlide(index) {
+      if (index < 0 || index >= totalSlides) return;
+
+      slides.forEach((s, i) => {
+        s.classList.remove('active', 'prev');
+        if (i < index) s.classList.add('prev');
+      });
+
+      slides[index].classList.add('active');
+      current = index;
+
+      // Update counter
+      document.getElementById('currentSlide').textContent = current + 1;
+
+      // Update buttons
+      document.getElementById('btnPrev').disabled = current === 0;
+      document.getElementById('btnNext').disabled = current === totalSlides - 1;
+
+      // Update progress
+      const pct = ((current + 1) / totalSlides) * 100;
+      document.getElementById('progress').style.width = pct + '%';
+    }
+
+    function nextSlide() {
+      goToSlide(current + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(current - 1);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      } else if (e.key === 'Home') {
+        goToSlide(0);
+      } else if (e.key === 'End') {
+        goToSlide(totalSlides - 1);
+      }
+    });
+
+    // Touch swipe support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 60) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    });
+
+    // Initialize
+    goToSlide(0);
+  </script>
+</body>
+
+</html>
